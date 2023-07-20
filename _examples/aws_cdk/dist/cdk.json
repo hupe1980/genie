@@ -1,0 +1,21 @@
+{
+  "app": "npx ts-node bin/todo-app.ts",
+  "context": {
+    "aws:cdk:enable-path-metadata": "true",
+    "aws:cdk:path-metadata-experimental": "true"
+  },
+  "output": "dist",
+  "context": {
+    "availabilityZones": "us-east-1a,us-east-1b,us-east-1c",
+    "aws-cdk:enable-asset-metadata": "false",
+    "aws-cdk:enable-role-usage-report": "true"
+  },
+  "watch": true,
+  "language": "typescript",
+  "context": {
+    "aws-cdk:enable-privacy-mode": "true"
+  },
+  "context": {
+    "aws-cdk:enable-stack-trace": "true"
+  }
+}

@@ -1,0 +1,17 @@
+# .gitignore
+
+# Node.js
+node_modules
+package-lock.json
+
+# AWS CDK
+.cdk.staging
+.cdk.out
+
+# CDK generated files
+cdk.out
+CDKOutputs.json
+
+# IDE
+.idea
+.vscode

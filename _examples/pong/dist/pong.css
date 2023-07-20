@@ -1,0 +1,72 @@
+/* pong.css */
+
+/* Set the size and position of the playing field */
+#playingField {
+  width: 600px;
+  height: 400px;
+  background-color: #000;
+  position: relative;
+  margin: 0 auto;
+}
+
+/* Style the user's paddle */
+#userPaddle {
+  width: 10px;
+  height: 60px;
+  background-color: #fff;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 10px;
+}
+
+/* Style the computer's paddle */
+#computerPaddle {
+  width: 10px;
+  height: 60px;
+  background-color: #fff;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+}
+
+/* Style the ball */
+#ball {
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+/* Style the score counter */
+#userScore,
+#computerScore {
+  color: #fff;
+  font-size: 24px;
+  position: absolute;
+  top: 10px;
+}
+
+#userScore {
+  left: 10px;
+}
+
+#computerScore {
+  right: 10px;
+}
+
+/* Style the message */
+#message {
+  color: #fff;
+  font-size: 36px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+}

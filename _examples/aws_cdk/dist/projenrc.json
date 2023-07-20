@@ -1,0 +1,35 @@
+const { AwsCdkTypeScriptApp } = require('projen');
+
+const project = new AwsCdkTypeScriptApp({
+  cdkVersion: '1.95.2',
+  defaultReleaseBranch: 'main',
+  name: 'aws-cdk-todo-app',
+  cdkDependencies: [
+    'aws-lambda',
+    'aws-lambda-event-types',
+    'aws-dynamodb',
+    'aws-apigateway',
+  ],
+  cdkTestDependencies: [
+    '@types/aws-lambda',
+    '@types/aws-dynamodb',
+    '@types/aws-apigateway',
+  ],
+  deps: [
+    'uuid',
+  ],
+  devDeps: [
+    'esbuild',
+  ],
+  gitignore: [
+    '.env',
+    'cdk.context.json',
+  ],
+  tsconfig: {
+    compilerOptions: {
+      lib: ['es2020', 'dom'],
+    },
+  },
+});
+
+project.synth();
