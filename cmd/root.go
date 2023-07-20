@@ -2,6 +2,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -48,6 +49,8 @@ genie -p prompt.txt`,
 				apiKey = os.Getenv("OPENAI_API_KEY")
 			}
 
+			ctx := context.Background()
+
 			cg, err := codegen.New(apiKey, func(o *codegen.CodeGenOptions) {
 				o.ModelName = globalOpts.model
 			})
@@ -62,7 +65,7 @@ genie -p prompt.txt`,
 
 			fmt.Println("Create list of files:")
 
-			fpOutput, err := cg.FilePaths(&codegen.FilePathsInput{
+			fpOutput, err := cg.FilePaths(ctx, &codegen.FilePathsInput{
 				Prompt: prompt,
 			})
 			if err != nil {
@@ -78,7 +81,7 @@ genie -p prompt.txt`,
 
 			fmt.Println("Create list of shared Dependecies:")
 
-			sdOutput, err := cg.SharedDependencies(&codegen.SharedDependenciesInput{
+			sdOutput, err := cg.SharedDependencies(ctx, &codegen.SharedDependenciesInput{
 				Prompt:    prompt,
 				FilePaths: fpOutput.FilePaths,
 			})
@@ -108,7 +111,7 @@ genie -p prompt.txt`,
 				}
 
 				g.Go(func() error {
-					cgOutput, genErr := cg.GenerateSourceCode(&codegen.GenerateSourceCodeInput{
+					cgOutput, genErr := cg.GenerateSourceCode(ctx, &codegen.GenerateSourceCodeInput{
 						Prompt:             prompt,
 						Filename:           fp,
 						FilePaths:          fpOutput.FilePaths,

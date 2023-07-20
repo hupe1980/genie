@@ -95,7 +95,7 @@ type FilePathsOutput struct {
 }
 
 // FilePaths generates a list of file paths based on the input prompt.
-func (cg *CodeGen) FilePaths(input *FilePathsInput) (*FilePathsOutput, error) {
+func (cg *CodeGen) FilePaths(ctx context.Context, input *FilePathsInput) (*FilePathsOutput, error) {
 	ct := prompt.NewChatTemplate([]prompt.MessageTemplate{
 		prompt.NewSystemMessageTemplate(filePathsSystemPrompt),
 		prompt.NewHumanMessageTemplate(filePathsHumanPrompt),
@@ -108,7 +108,7 @@ func (cg *CodeGen) FilePaths(input *FilePathsInput) (*FilePathsOutput, error) {
 		return nil, err
 	}
 
-	result, err := model.GeneratePrompt(context.Background(), cg.model, pv)
+	result, err := model.GeneratePrompt(ctx, cg.model, pv)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ type SharedDependenciesOutput struct {
 }
 
 // SharedDependencies generates shared dependencies based on the input prompt and file paths.
-func (cg *CodeGen) SharedDependencies(input *SharedDependenciesInput) (*SharedDependenciesOutput, error) {
+func (cg *CodeGen) SharedDependencies(ctx context.Context, input *SharedDependenciesInput) (*SharedDependenciesOutput, error) {
 	t := prompt.NewSystemMessageTemplate(sharedDependenciesSystemPrompt)
 
 	pv, err := t.FormatPrompt(map[string]any{
@@ -152,7 +152,7 @@ func (cg *CodeGen) SharedDependencies(input *SharedDependenciesInput) (*SharedDe
 		return nil, err
 	}
 
-	result, err := model.GeneratePrompt(context.Background(), cg.model, pv)
+	result, err := model.GeneratePrompt(ctx, cg.model, pv)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +180,7 @@ type GenerateSourceCodeOutput struct {
 }
 
 // GenerateSourceCode generates source code based on the input prompt, filename, file paths, and shared dependencies.
-func (cg *CodeGen) GenerateSourceCode(input *GenerateSourceCodeInput) (*GenerateSourceCodeOutput, error) {
+func (cg *CodeGen) GenerateSourceCode(ctx context.Context, input *GenerateSourceCodeInput) (*GenerateSourceCodeOutput, error) {
 	sharedDepsYaml, err := yaml.Marshal(input.SharedDependencies)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal shared dependencies: %w", err)
@@ -201,7 +201,7 @@ func (cg *CodeGen) GenerateSourceCode(input *GenerateSourceCodeInput) (*Generate
 		return nil, err
 	}
 
-	result, err := model.GeneratePrompt(context.Background(), cg.model, pv)
+	result, err := model.GeneratePrompt(ctx, cg.model, pv)
 	if err != nil {
 		return nil, err
 	}
