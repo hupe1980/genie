@@ -1,3 +1,4 @@
+// Package codegen provides code generation functionality using different models.
 package codegen
 
 import (
@@ -7,20 +8,10 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/hupe1980/golc/callback"
 	"github.com/hupe1980/golc/model"
-	"github.com/hupe1980/golc/model/chatmodel"
 	"github.com/hupe1980/golc/prompt"
 	"github.com/hupe1980/golc/schema"
 	"gopkg.in/yaml.v2"
-)
-
-const (
-	// DefaultModelName is the default model name used for code generation.
-	DefaultModelName = "gpt-3.5-turbo"
-
-	// DefaultTemperature is the default temperature used for code generation.
-	DefaultTemperature = 0.4
 )
 
 //go:embed prompts/file_paths_system_prompt.tpl
@@ -39,48 +30,39 @@ var codeGenerationSystemPrompt string
 var codeGenerationHumanPrompt string
 
 // CodeGenOptions contains options for configuring the CodeGen.
-type CodeGenOptions struct {
-	// ModelName is the name of the model to use for code generation.
-	ModelName string
+type CodeGenOptions struct{}
 
-	// Temperatur is the temperature setting for text generation. Higher values produce more random output.
-	Temperature float32
+// CodeGen represents the interface for the code generation.
+type CodeGen interface {
+	// FilePaths generates file paths based on the input prompt.
+	FilePaths(ctx context.Context, input *FilePathsInput) (*FilePathsOutput, error)
+
+	// SharedDependencies generates shared dependencies based on the input prompt and file paths.
+	SharedDependencies(ctx context.Context, input *SharedDependenciesInput) (*SharedDependenciesOutput, error)
+
+	// GenerateSourceCode generates source code based on the input prompt, filename, file paths,
+	// and shared dependencies.
+	GenerateSourceCode(ctx context.Context, input *GenerateSourceCodeInput) (*GenerateSourceCodeOutput, error)
 }
 
-// CodeGen represents a code generator based on a chat model.
-type CodeGen struct {
+// codeGen represents a code generator based on a chat model.
+type codeGen struct {
 	model schema.ChatModel
-	info  *callback.OpenAIHandler
 	opts  CodeGenOptions
 }
 
-// New creates a new CodeGen instance with the given API key and optional configuration options.
-func New(apiKey string, optFns ...func(o *CodeGenOptions)) (*CodeGen, error) {
-	opts := CodeGenOptions{
-		ModelName:   DefaultModelName,
-		Temperature: DefaultTemperature,
-	}
+// New creates a new instance of the code generator.
+func New(model schema.ChatModel, optFns ...func(o *CodeGenOptions)) CodeGen {
+	opts := CodeGenOptions{}
 
 	for _, fn := range optFns {
 		fn(&opts)
 	}
 
-	info := callback.NewOpenAIHandler()
-
-	openAI, err := chatmodel.NewOpenAI(apiKey, func(o *chatmodel.OpenAIOptions) {
-		o.ModelName = opts.ModelName
-		o.Temperature = opts.Temperature
-		o.Callbacks = []schema.Callback{info}
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &CodeGen{
-		model: openAI,
-		info:  info,
+	return &codeGen{
+		model: model,
 		opts:  opts,
-	}, nil
+	}
 }
 
 // FilePathsInput represents the input for generating file paths.
@@ -95,7 +77,10 @@ type FilePathsOutput struct {
 }
 
 // FilePaths generates a list of file paths based on the input prompt.
-func (cg *CodeGen) FilePaths(ctx context.Context, input *FilePathsInput) (*FilePathsOutput, error) {
+// It takes a FilePathsInput containing the prompt string as input and returns a FilePathsOutput
+// containing the generated file paths and reasoning for the generated output.
+// The function returns an error if there is any issue during the generation process.
+func (cg *codeGen) FilePaths(ctx context.Context, input *FilePathsInput) (*FilePathsOutput, error) {
 	ct := prompt.NewChatTemplate([]prompt.MessageTemplate{
 		prompt.NewSystemMessageTemplate(filePathsSystemPrompt),
 		prompt.NewHumanMessageTemplate(filePathsHumanPrompt),
@@ -141,7 +126,11 @@ type SharedDependenciesOutput struct {
 }
 
 // SharedDependencies generates shared dependencies based on the input prompt and file paths.
-func (cg *CodeGen) SharedDependencies(ctx context.Context, input *SharedDependenciesInput) (*SharedDependenciesOutput, error) {
+// It takes a SharedDependenciesInput containing the prompt string and file paths as input
+// and returns a SharedDependenciesOutput containing the generated shared dependencies,
+// along with reasoning for the generated output.
+// The function returns an error if there is any issue during the generation process.
+func (cg *codeGen) SharedDependencies(ctx context.Context, input *SharedDependenciesInput) (*SharedDependenciesOutput, error) {
 	t := prompt.NewSystemMessageTemplate(sharedDependenciesSystemPrompt)
 
 	pv, err := t.FormatPrompt(map[string]any{
@@ -179,8 +168,14 @@ type GenerateSourceCodeOutput struct {
 	Source   string `json:"source"`
 }
 
-// GenerateSourceCode generates source code based on the input prompt, filename, file paths, and shared dependencies.
-func (cg *CodeGen) GenerateSourceCode(ctx context.Context, input *GenerateSourceCodeInput) (*GenerateSourceCodeOutput, error) {
+// GenerateSourceCode generates source code based on the input prompt, filename, file paths,
+// and shared dependencies.
+// It takes a GenerateSourceCodeInput containing the prompt string, filename, file paths,
+// and shared dependencies as input.
+// The function returns a GenerateSourceCodeOutput containing the generated source code
+// and the specified filename.
+// The function returns an error if there is any issue during the generation process.
+func (cg *codeGen) GenerateSourceCode(ctx context.Context, input *GenerateSourceCodeInput) (*GenerateSourceCodeOutput, error) {
 	sharedDepsYaml, err := yaml.Marshal(input.SharedDependencies)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal shared dependencies: %w", err)
@@ -210,11 +205,6 @@ func (cg *CodeGen) GenerateSourceCode(ctx context.Context, input *GenerateSource
 		Filename: input.Filename,
 		Source:   result.Generations[0].Text,
 	}, nil
-}
-
-// Info returns the information about the code generator.
-func (cg *CodeGen) Info() string {
-	return cg.info.String()
 }
 
 // toJSON extracts a JSON string from a given string.

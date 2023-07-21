@@ -30,26 +30,71 @@ Run the following command in the checked-out repository:
 ```bash
 make docker-build
 
-docker run -it --rm -v $PWD/dist:/dist -e OPENAI_API_KEY=$OPENAI_API_KEY genie -p "create a golang hello world"
+docker run -it --rm -v $PWD/dist:/dist -e OPENAI_API_KEY=$OPENAI_API_KEY genie openai -p "create a golang hello world"
 ```
 
 ## How to use
+Genie is a versatile code generation tool that simplifies the process of creating applications, APIs, and more. It offers an array of commands and features to cater to various code generation needs.
+
 ```text
 Usage:
-  genie [flags]
+  genie [command]
+
+Available Commands:
+  anthropic   Run codegen provided by anthropic
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  openai      Run codegen provided by openAI
+
+Flags:
+  -h, --help            help for genie
+  -o, --outdir string   outdir to use (default "dist")
+  -p, --prompt string   prompt to use (required)
+  -v, --version         version for genie
+
+Use "genie [command] --help" for more information about a command.
+```
+
+### OpenAI
+```text
+Usage:
+  genie openai [flags]
 
 Examples:
-genie -p "Create a python hello world"
-genie -p prompt.txt
+genie openai -p "Create a python hello world"
+genie openai -p prompt.txt
 
 Flags:
       --api-key string        openAI api key
-  -h, --help                  help for genie
+  -h, --help                  help for openai
+      --max-tokens int        max tokens to use (default -1)
   -m, --model string          model to use (default "gpt-3.5-turbo")
-  -o, --outdir string         outdir to use (default "dist")
-  -p, --prompt string         prompt to use (required)
   -t, --temperature float32   temperature to use (default 0.4)
-  -v, --version               version for genie
+
+Global Flags:
+  -o, --outdir string   outdir to use (default "dist")
+  -p, --prompt string   prompt to use (required)
+```
+
+### Anthropic
+```text
+Usage:
+  genie anthropic [flags]
+
+Examples:
+genie anthropic -p "Create a python hello world"
+genie anthropic -p prompt.txt
+
+Flags:
+      --api-key string      anthropic api key
+  -h, --help                help for anthropic
+      --max-tokens int      max tokens to use (default -1)
+  -m, --model string        model to use (default "claude-v1")
+  -t, --temperature float   temperature to use (default 0.4)
+
+Global Flags:
+  -o, --outdir string   outdir to use (default "dist")
+  -p, --prompt string   prompt to use (required)
 ```
 
 ## Environment Variables
@@ -57,6 +102,7 @@ The following environment variables are supported by this project:
 
 | Variable Name     | Description                                                                                           |
 |-------------------|-------------------------------------------------------------------------------------------------------|
+| ANTHROPIC_API_KEY | The API key required for accessing the Anthropic service.                                             |
 | OPENAI_API_KEY    | The API key required for accessing the OpenAI service.                                                |
 
 ## Example
