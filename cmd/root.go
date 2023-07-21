@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -43,8 +44,6 @@ func newRootCmd(version string) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&globalOpts.prompt, "prompt", "p", "", "prompt to use (required)")
 	cmd.PersistentFlags().StringVarP(&globalOpts.outdir, "outdir", "o", "dist", "outdir to use")
 
-	_ = cmd.MarkPersistentFlagRequired("prompt")
-
 	cmd.AddCommand(
 		newAnthropicCmd(globalOpts),
 		newOpenAICmd(globalOpts),
@@ -58,6 +57,10 @@ func run(ctx context.Context, globalOpts *globalOptions, cg codegen.CodeGen) err
 	prompt, err := readFileOrString(globalOpts.prompt)
 	if err != nil {
 		return err
+	}
+
+	if prompt == "" {
+		return errors.New("prompt is required")
 	}
 
 	fmt.Println("Create list of files:")
