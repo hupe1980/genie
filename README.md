@@ -3,7 +3,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/hupe1980/genie.svg)](https://pkg.go.dev/github.com/hupe1980/genie)
 > Genie is a Proof of Concept (POC) source code generator that showcases the potential of utilizing Large Language Models (LLMs) for code generation. As a limited prototype, Genie provides a glimpse into the capabilities of LLM-based code generation tools. It allows users to experiment with generating source code based on simplified prompts or descriptions.
 
-Genie is based on https://github.com/smol-ai/developer.
+Genie is heavily influenced by https://github.com/smol-ai/developer.
 
 ## Installing
 You can install the pre-compiled binary in several different ways
@@ -12,7 +12,6 @@ Download the .deb, .rpm or .apk from the [releases page](https://github.com/hupe
 
 ### manually:
 Download the pre-compiled binaries from the [releases page](https://github.com/hupe1980/genie/releases) and copy to the desired location.
-
 
 ## Building from source
 Install a [Go 1.20 compiler](https://golang.org/dl).
