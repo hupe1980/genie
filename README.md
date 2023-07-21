@@ -88,7 +88,7 @@ genie anthropic -p prompt.txt
 Flags:
       --api-key string      anthropic api key
   -h, --help                help for anthropic
-      --max-tokens int      max tokens to use (default -1)
+      --max-tokens int      max tokens to use (default 4000)
   -m, --model string        model to use (default "claude-v1")
   -t, --temperature float   temperature to use (default 0.4)
 

@@ -52,7 +52,7 @@ genie anthropic -p prompt.txt`,
 
 	cmd.Flags().StringVarP(&opts.apiKey, "api-key", "", "", "anthropic api key")
 	cmd.Flags().StringVarP(&opts.model, "model", "m", codegen.DefaultAnthropicModelName, "model to use")
-	cmd.Flags().IntVarP(&opts.maxTokens, "max-tokens", "", codegen.DefaultOpenAIMaxTokens, "max tokens to use")
+	cmd.Flags().IntVarP(&opts.maxTokens, "max-tokens", "", codegen.DefaultAnthropicMaxTokens, "max tokens to use")
 	cmd.Flags().Float64VarP(&opts.temperature, "temperature", "t", codegen.DefaultAnthropicTemperature, "temperature to use")
 
 	return cmd
