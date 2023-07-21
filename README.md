@@ -5,6 +5,34 @@
 
 Genie is based on https://github.com/smol-ai/developer.
 
+## Installing
+You can install the pre-compiled binary in several different ways
+### deb/rpm/apk:
+Download the .deb, .rpm or .apk from the [releases page](https://github.com/hupe1980/genie/releases) and install them with the appropriate tools.
+
+### manually:
+Download the pre-compiled binaries from the [releases page](https://github.com/hupe1980/genie/releases) and copy to the desired location.
+
+
+## Building from source
+Install a [Go 1.20 compiler](https://golang.org/dl).
+
+Run the following command in the checked-out repository:
+
+```
+make build
+```
+
+(Add the appropriate .exe extension on Windows systems, of course.)
+
+## Docker Support
+Run the following command in the checked-out repository:
+```bash
+make docker-build
+
+docker run -it --rm -v $PWD/dist:/dist -e OPENAI_API_KEY=$OPENAI_API_KEY genie -p "create a golang hello world"
+```
+
 ## How to use
 ```text
 Usage:
@@ -23,7 +51,17 @@ Flags:
   -t, --temperature float32   temperature to use (default 0.4)
   -v, --version               version for genie
 ```
+
+## Environment Variables
+The following environment variables are supported by this project:
+
+| Variable Name     | Description                                                                                           |
+|-------------------|-------------------------------------------------------------------------------------------------------|
+| OPENAI_API_KEY    | The API key required for accessing the OpenAI service.                                                |
+
 ## Example
+This example instructs genie to use the _examples/aws_cdk/prompt.md file as the input prompt and generate the AWS CDK app based on the specifications provided in the prompt. The generated code will be saved in the _examples/aws_cdk/dist directory.
+
 ```bash
 genie -p _examples/aws_cdk/prompt.md -o _examples/aws_cdk/dist
 ```

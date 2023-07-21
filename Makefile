@@ -24,6 +24,16 @@ run:
 test: 
 	@go test -v -race -count=1 -coverprofile=coverage.out ./...
 
+.PHONY: build
+## build: Build from source
+build:
+	@go build -o genie .
+
+.PHOMY: docker-build
+## docker-build: Build a docker image
+docker-build:
+	docker build -t genie .
+
 .PHONY: help
 ## help: Prints this help message
 help: Makefile
